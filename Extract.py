@@ -3,6 +3,7 @@
 from __future__ import division, print_function
 
 # This method is called once per file to extract numbers out of that file.
+# The default is to assume the file is a set of numbers.
 def processFile(f):
     # Modify this code to do different per-file number extraction.
     nums = []
@@ -19,7 +20,7 @@ import traceback
 
 def print_cdf(cdf, outfile = sys.stdout):
     for number, fraction in cdf:
-	outfile.write("%8.4f    %8.3f\n" % (number, fraction))
+	outfile.write("%9.4f    %9.4f\n" % (number, fraction))
 
 
 # Generate the cdf, which can later be either printed or plotted.
@@ -59,12 +60,19 @@ def main():
             try:
                 with open(f) as currentFile:
                     numbers.extend(processFile(currentFile))
-            except Exception as e:
+            except:
                 sys.stderr.write("Error processing file '%s':\n" % f)
                 traceback.print_exc()
                 return
     cdf = generate_cdf(numbers)
     print_cdf(cdf)
+    try:
+        from Plot import plot_cdf
+        plot_cdf(cdf)
+    except:
+        sys.stderr.write("Plotting with matplotlib failed.")
+        traceback.print_exc()
+        return
 
 if __name__ == "__main__":
     main()
