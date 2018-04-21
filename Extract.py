@@ -1,14 +1,25 @@
 #!/usr/bin/python
 
 from __future__ import division, print_function
+import re
 
 # This method is called once per file to extract numbers out of that file.
 # The default is to assume the file is a set of numbers.
 def processFile(f):
-    # Modify this code to do different per-file number extraction.
+    writeIDs = set()
     nums = []
     for line in f:
-        nums.append(int(line))
+        line = line.strip()
+        # Write is being dispatched
+        if "Dispatching opcode 14" in line:
+            match = re.search('ID (\d+):', line)
+            writeIDs.add(match.group(1))
+            continue
+        if "took worker time" in line:
+            match = re.search('ID (\d+): took worker time (\d+)', line)
+            if match.group(1) in writeIDs:
+                writeIDs.remove(match.group(1))
+                nums.append(int(match.group(2)))
     return nums
 
 ################################################################################
