@@ -20,7 +20,7 @@ import traceback
 
 def print_cdf(cdf, outfile = sys.stdout):
     for number, fraction in cdf:
-	outfile.write("%9.4f    %9.4f\n" % (number, fraction))
+	outfile.write("%.4f,%.4f\n" % (number, fraction))
 
 
 # Generate the cdf, which can later be either printed or plotted.
