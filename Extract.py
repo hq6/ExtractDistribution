@@ -19,6 +19,7 @@ import sys
 import traceback
 
 def print_cdf(cdf, outfile = sys.stdout):
+    print("Number,Fraction")
     for number, fraction in cdf:
 	outfile.write("%.4f,%.4f\n" % (number, fraction))
 
