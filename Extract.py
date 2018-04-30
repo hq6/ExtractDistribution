@@ -3,6 +3,10 @@
 from __future__ import division, print_function
 import re
 
+def parseTimeAndId(line):
+    match = re.search(': +(\d+\.\d) ns .* ID (\d+):', line)
+    return float(match.group(1)),  match.group(2)
+
 # This method is called once per file to extract numbers out of that file.
 # The default is to assume the file is a set of numbers.
 def processFile(f):
@@ -12,14 +16,14 @@ def processFile(f):
         line = line.strip()
         # Write is being dispatched
         if "Dispatching opcode 14" in line:
-            match = re.search(': +(\d+\.\d) ns .* ID (\d+):', line)
-            writeIDs[match.group(2)] = float(match.group(1))
+            timestamp, ID = parseTimeAndId(line)
+            writeIDs[ID] = timestamp
             continue
         if "reply sent" in line:
-            match = re.search(': +(\d+\.\d) ns .* ID (\d+):', line)
-            if match.group(2) in writeIDs:
-                nums.append(float(match.group(1)) - writeIDs[match.group(2)])
-                del writeIDs[match.group(2)]
+            timestamp, ID = parseTimeAndId(line)
+            if ID in writeIDs:
+                nums.append(timestamp - writeIDs[ID])
+                del writeIDs[ID]
     return nums
 
 ################################################################################
