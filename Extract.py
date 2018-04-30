@@ -6,20 +6,20 @@ import re
 # This method is called once per file to extract numbers out of that file.
 # The default is to assume the file is a set of numbers.
 def processFile(f):
-    writeIDs = set()
+    writeIDs = {}
     nums = []
     for line in f:
         line = line.strip()
         # Write is being dispatched
         if "Dispatching opcode 14" in line:
-            match = re.search('ID (\d+):', line)
-            writeIDs.add(match.group(1))
+            match = re.search(': +(\d+\.\d) ns .* ID (\d+):', line)
+            writeIDs[match.group(2)] = float(match.group(1))
             continue
-        if "took worker time" in line:
-            match = re.search('ID (\d+): took worker time (\d+)', line)
-            if match.group(1) in writeIDs:
-                writeIDs.remove(match.group(1))
-                nums.append(int(match.group(2)))
+        if "reply sent" in line:
+            match = re.search(': +(\d+\.\d) ns .* ID (\d+):', line)
+            if match.group(2) in writeIDs:
+                nums.append(float(match.group(1)) - writeIDs[match.group(2)])
+                del writeIDs[match.group(2)]
     return nums
 
 ################################################################################
