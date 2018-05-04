@@ -8,7 +8,11 @@ def plot_cdf(cdf, xlabel="Number", ylabel="Fraction"):
     fractions =  [x[1] for x in cdf]
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.plot(numbers, fractions)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlim(1,1e9)
+    # plt.plot(numbers, fractions)
+    plt.plot(numbers, [1-x for x in fractions])
     plt.show()
 
 def read_cdf(f):
